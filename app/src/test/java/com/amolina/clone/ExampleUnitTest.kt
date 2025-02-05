@@ -1,4 +1,4 @@
-package com.amolina.netflixclone
+package com.amolina.clone
 
 import org.junit.Test
 

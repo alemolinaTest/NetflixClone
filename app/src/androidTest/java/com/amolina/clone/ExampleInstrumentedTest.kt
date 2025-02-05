@@ -1,4 +1,4 @@
-package com.amolina.netflixclone
+package com.amolina.clone
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

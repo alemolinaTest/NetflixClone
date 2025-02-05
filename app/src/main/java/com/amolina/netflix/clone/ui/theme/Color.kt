@@ -1,4 +1,4 @@
-package com.amolina.netflixclone.ui.theme
+package com.amolina.netflix.clone.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
