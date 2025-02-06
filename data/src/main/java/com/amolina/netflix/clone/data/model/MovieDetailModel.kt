@@ -1,5 +1,6 @@
 package com.amolina.netflix.clone.data.model
 
+import com.amolina.netflix.clone.domain.model.MovieDetail
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -72,3 +73,18 @@ data class BelongsToCollection(
     val posterPath: String?,
     val backdropPath: String?
 )
+
+fun MovieDetailModel.toDomain(): MovieDetail {
+    return MovieDetail(
+        id = this.id,
+        title = this.title,
+        overview = this.overview,
+        releaseDate = this.releaseDate,
+        posterPath = this.posterPath,
+        backdropPath = this.backdropPath,
+        genres = this.genres.map { it.name },
+        runtime = this.runtime,
+        voteAverage = this.voteAverage,
+        voteCount = this.voteCount
+    )
+}

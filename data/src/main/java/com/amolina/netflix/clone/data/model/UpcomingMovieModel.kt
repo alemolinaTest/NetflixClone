@@ -1,5 +1,6 @@
 package com.amolina.netflix.clone.data.model
 
+import com.amolina.netflix.clone.domain.model.UpcomingMovies
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -44,12 +45,14 @@ data class Result(
     val backdropPath: String?,
     val genreIds: List<Int>,
     val id: Int,
+    val name: String,
     val originalLanguage: String,
     val originalTitle: String,
     val overview: String,
     val popularity: Double,
     val posterPath: String,
     val releaseDate: String,
+    val firstAirDate: String,
     val title: String,
     val video: Boolean,
     val voteAverage: Double,
@@ -60,12 +63,14 @@ data class Result(
         backdropPath: String? = null,
         genreIds: List<Int>? = null,
         id: Int? = null,
+        name: String? = null,
         originalLanguage: String? = null,
         originalTitle: String? = null,
         overview: String? = null,
         popularity: Double? = null,
         posterPath: String? = null,
         releaseDate: String? = null,
+        firstAirDate: String? = null,
         title: String? = null,
         video: Boolean? = null,
         voteAverage: Double? = null,
@@ -84,6 +89,25 @@ data class Result(
         title = title ?: this.title,
         video = video ?: this.video,
         voteAverage = voteAverage ?: this.voteAverage,
-        voteCount = voteCount ?: this.voteCount
+        voteCount = voteCount ?: this.voteCount,
+        firstAirDate = firstAirDate ?: this.firstAirDate,
+        name = name ?: this.name
+    )
+}
+
+fun UpcomingMovieModel.toDomain(): UpcomingMovies {
+    return UpcomingMovies(
+        dates = this.dates.toDates(),
+        page = this.page,
+        results = this.results.map { it.toDomain() },
+        totalPages = this.totalPages,
+        totalResults = this.totalResults
+    )
+}
+
+fun Dates.toDates(): com.amolina.netflix.clone.domain.model.Dates {
+    return com.amolina.netflix.clone.domain.model.Dates(
+        maximum = this.maximum,
+        minimum = this.minimum
     )
 }
