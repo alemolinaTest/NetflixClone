@@ -13,7 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.amolina.netflixclone"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -38,6 +38,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+        freeCompilerArgs += listOf("-Xlint:deprecation")
     }
     buildFeatures {
         compose = true
