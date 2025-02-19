@@ -30,13 +30,13 @@ fun TvSeriesModel.toDomain(): TvSeries {
 
 fun Result.toShowDomain(): TvShow {
     return TvShow(
-        id = this.id,
-        name = this.name,
-        overview = this.overview,
-        firstAirDate = this.firstAirDate,
+        id = 0,//this.id,
+        name = "",
+        overview = "",//this.overview,
+        firstAirDate = "",//this.firstAirDate,
         posterPath = this.posterPath,
-        backdropPath = this.backdropPath,
-        voteAverage = this.voteAverage,
-        voteCount = this.voteCount
+        backdropPath = "",//this.backdropPath,
+        voteAverage = 0.0,//this.voteAverage,
+        voteCount = 0,//this.voteCount
     )
 }

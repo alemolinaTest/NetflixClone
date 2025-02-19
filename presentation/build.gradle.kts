@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -37,9 +38,13 @@ android {
 dependencies {
     implementation(project(":domain"))
 
+    // Hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.androidx.ui.tooling)
     implementation(libs.navigation.compose)
+    implementation(libs.hilt.navigation.compose)
 
     implementation(libs.lifecycle.runtime)
     implementation(libs.androidx.activity.compose)

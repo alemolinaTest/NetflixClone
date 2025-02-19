@@ -70,6 +70,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.retrofit.serialization)
     implementation(libs.retrofit)
     implementation(libs.okhttp.logging)
 }

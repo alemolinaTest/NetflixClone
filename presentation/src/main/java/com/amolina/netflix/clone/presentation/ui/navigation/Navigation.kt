@@ -11,11 +11,13 @@ import com.amolina.netflix.clone.presentation.ui.HomeScreen
 fun AppNavGraph() {
     val navController = rememberNavController()
 
+
     NavHost(
         navController = navController,
         startDestination = "home"
     ) {
-        composable("home") { HomeScreen(navController) }
+        composable("home") {
+            HomeScreen(navController) }
 //        composable("news_feed") { NewsFeedScreen() }
 //        composable("downloads") { DownloadsScreen() }
     }

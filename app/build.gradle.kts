@@ -47,13 +47,15 @@ android {
 
 dependencies {
     implementation(project(":presentation"))
-
+    implementation(project(":domain"))
 
     implementation(libs.androidx.ui.tooling)
     implementation(libs.navigation.compose)
 
     // Hilt
     implementation(libs.hilt.android)
+    implementation(project(":data"))
+
     ksp(libs.hilt.compiler)
 
     implementation(libs.lifecycle.runtime)

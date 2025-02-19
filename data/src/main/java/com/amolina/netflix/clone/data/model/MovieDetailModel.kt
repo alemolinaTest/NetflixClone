@@ -22,7 +22,7 @@ data class MovieDetailModel(
     val posterPath: String,
     val productionCompanies: List<ProductionCompany>,
     val productionCountries: List<ProductionCountry>,
-    val releaseDate: String,
+    val releaseDate: String?,
     val revenue: Int,
     val runtime: Int,
     val spokenLanguages: List<SpokenLanguage>,

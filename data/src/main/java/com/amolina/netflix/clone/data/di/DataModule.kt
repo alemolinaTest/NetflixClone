@@ -4,15 +4,18 @@ import com.amolina.netflix.clone.data.api.ApiService
 import com.amolina.netflix.clone.data.api.Constants.BASE_URL
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -44,17 +47,26 @@ class DataModule {
             .build()
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     @Provides
     @Singleton
     fun provideRetrofit(
         baseUrl: String,
         gson: Gson,
         client: OkHttpClient,
-    ): ApiService = Retrofit
-        .Builder()
-        .baseUrl(baseUrl)
-        .client(client)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build()
-        .create(ApiService::class.java)
+    ): ApiService {
+        val json = Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true  // ✅ Fills missing values with defaults
+        }
+
+      return  Retrofit
+            .Builder()
+            .baseUrl(baseUrl)
+            .client(client)
+            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
+            .build()
+            .create(ApiService::class.java)
+
+    }
 }

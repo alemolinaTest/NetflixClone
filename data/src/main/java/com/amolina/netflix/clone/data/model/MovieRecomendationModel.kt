@@ -2,34 +2,22 @@ package com.amolina.netflix.clone.data.model
 
 import com.amolina.netflix.clone.domain.model.Movie
 import com.amolina.netflix.clone.domain.model.MovieRecommendation
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @Serializable
 data class MovieRecommendationModel(
     val page: Int,
-    val results: List<Result>,
-    val totalPages: Int,
-    val totalResults: Int
-) {
-    fun copyWith(
-        page: Int? = null,
-        results: List<Result>? = null,
-        totalPages: Int? = null,
-        totalResults: Int? = null
-    ) = MovieRecommendationModel(
-        page = page ?: this.page,
-        results = results ?: this.results,
-        totalPages = totalPages ?: this.totalPages,
-        totalResults = totalResults ?: this.totalResults
-    )
 
-    companion object {
-        fun fromRawJson(jsonString: String): MovieRecommendationModel = Json.decodeFromString(jsonString)
-        fun MovieRecommendationModel.toRawJson(): String = Json.encodeToString(this)
-    }
-}
+    @SerialName("results")
+    val results: List<Result>,
+
+    @SerialName("total_pages")
+    val totalPages: Int,
+
+    @SerialName("total_results")
+    val totalResults: Int
+)
 
 @Serializable
 enum class OriginalLanguage {
@@ -52,13 +40,13 @@ fun MovieRecommendationModel.toDomain(): MovieRecommendation {
 
 fun Result.toDomain(): Movie {
     return Movie(
-        id = this.id,
-        title = this.title,
-        overview = this.overview,
-        releaseDate = this.releaseDate,
+//        id = this.id,
+//        title = this.title,
+//        overview = this.overview,
+//        releaseDate = this.releaseDate,
         posterPath = this.posterPath,
-        backdropPath = this.backdropPath,
-        voteAverage = this.voteAverage,
-        voteCount = this.voteCount
+//        backdropPath = this.backdropPath,
+//        voteAverage = this.voteAverage,
+//        voteCount = this.voteCount
     )
 }
