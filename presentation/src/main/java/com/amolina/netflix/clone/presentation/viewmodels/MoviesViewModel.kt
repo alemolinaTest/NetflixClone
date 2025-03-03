@@ -2,6 +2,8 @@ package com.amolina.netflix.clone.presentation.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amolina.netflix.clone.domain.iteractor.GetMovieRecommendationsUseCase
+import com.amolina.netflix.clone.domain.iteractor.GetMovieVideoUseCase
 import com.amolina.netflix.clone.domain.iteractor.GetNowPlayingMoviesUseCase
 import com.amolina.netflix.clone.domain.iteractor.GetPopularMoviesUseCase
 import com.amolina.netflix.clone.domain.iteractor.GetUpcomingMoviesUseCase
@@ -19,6 +21,8 @@ class MoviesViewModel @Inject constructor(
     private val getPopularMoviesUseCase: GetPopularMoviesUseCase,
     private val getUpcomingMoviesUseCase: GetUpcomingMoviesUseCase,
     private val getNowPlayingMoviesUseCase: GetNowPlayingMoviesUseCase,
+    private val getMovieRecommendationsUseCase: GetMovieRecommendationsUseCase,
+    private val getMovieVideoUseCase: GetMovieVideoUseCase,
     @IODispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
@@ -35,10 +39,13 @@ class MoviesViewModel @Inject constructor(
     private val _upcomingMoviesState = MutableStateFlow<List<Movie>>(emptyList())
     val upcomingMoviesState: StateFlow<List<Movie>> = _upcomingMoviesState
 
+    private val _recommendationMoviesState = MutableStateFlow<List<Movie>>(emptyList())
+    val recommendationMoviesState: StateFlow<List<Movie>> = _recommendationMoviesState
+
     init {
         fetchPopularMovies()
         fetchUpcomingMovies()
-        fetchNowPLayingMovies()
+        fetchNowPlayingMovies()
     }
 
     private fun fetchPopularMovies() {
@@ -53,9 +60,29 @@ class MoviesViewModel @Inject constructor(
         }
     }
 
-    private fun fetchNowPLayingMovies() {
+    private fun fetchNowPlayingMovies() {
         viewModelScope.launch(context = dispatcher) {
             _nowPlayingMoviesState.value = getNowPlayingMoviesUseCase.invoke()
+            if(_popularMoviesState.value.isNotEmpty()) {
+                fetchRecommendationMovies(_nowPlayingMoviesState.value.last().id)
+            }
+        }
+    }
+
+    private fun fetchRecommendationMovies(movieId:Int) {
+        viewModelScope.launch(context = dispatcher) {
+            _recommendationMoviesState.value = getMovieRecommendationsUseCase.invoke(movieId)
+        }
+    }
+
+    private val _movieVideoUrl = MutableStateFlow<String?>(null)
+    val movieVideoUrl: StateFlow<String?> = _movieVideoUrl
+
+    fun fetchMovieTrailer(movieId: Int) {
+        viewModelScope.launch {
+            val response = getMovieVideoUseCase.invoke(movieId)
+            val trailer = response.firstOrNull { it.site == "YouTube" && it.type == "Trailer" }
+            _movieVideoUrl.value = trailer?.let { "https://www.youtube.com/watch?v=${it.videoKey}" }
         }
     }
 

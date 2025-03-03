@@ -2,9 +2,9 @@ package com.amolina.netflix.clone.data.repository
 
 import com.amolina.netflix.clone.data.api.ApiService
 import com.amolina.netflix.clone.data.model.toDomain
+import com.amolina.netflix.clone.data.model.toVideoDomainList
 import com.amolina.netflix.clone.domain.model.Movie
-import com.amolina.netflix.clone.domain.model.MovieRecommendation
-import com.amolina.netflix.clone.domain.model.UpcomingMovies
+import com.amolina.netflix.clone.domain.model.Video
 import com.amolina.netflix.clone.domain.repository.MovieRepository
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +31,9 @@ class MovieRepositoryImplementation @Inject constructor(private val api: ApiServ
 
     override suspend fun getMovieRecommendations(movieId: Int): Result<List<Movie>> =
         safeApiCall { api.getMovieRecommendations(movieId).toDomain().results }
+
+    override suspend fun getMovieVideo(movieId: Int): Result<List<Video>> =
+        safeApiCall { api.getMovieVideos(movieId).toVideoDomainList() }
 
     private suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T> {
         return withContext(Dispatchers.IO) {

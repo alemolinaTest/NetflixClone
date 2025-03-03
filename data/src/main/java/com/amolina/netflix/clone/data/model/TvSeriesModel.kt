@@ -3,8 +3,6 @@ package com.amolina.netflix.clone.data.model
 import com.amolina.netflix.clone.domain.model.TvSeries
 import com.amolina.netflix.clone.domain.model.TvShow
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @Serializable
 data class TvSeriesModel(
@@ -12,12 +10,7 @@ data class TvSeriesModel(
     val results: List<Result>,
     val totalPages: Int,
     val totalResults: Int
-) {
-    companion object {
-        fun fromRawJson(jsonString: String): TvSeriesModel = Json.decodeFromString(jsonString)
-        fun TvSeriesModel.toRawJson(): String = Json.encodeToString(this)
-    }
-}
+)
 
 fun TvSeriesModel.toDomain(): TvSeries {
     return TvSeries(
@@ -30,13 +23,11 @@ fun TvSeriesModel.toDomain(): TvSeries {
 
 fun Result.toShowDomain(): TvShow {
     return TvShow(
-        id = 0,//this.id,
-        name = "",
-        overview = "",//this.overview,
-        firstAirDate = "",//this.firstAirDate,
+        id = this.id,
+        overview = this.overview,
         posterPath = this.posterPath,
-        backdropPath = "",//this.backdropPath,
-        voteAverage = 0.0,//this.voteAverage,
-        voteCount = 0,//this.voteCount
+        backdropPath = this.backdropPath,
+        voteAverage = this.voteAverage,
+        voteCount = this.voteCount
     )
 }

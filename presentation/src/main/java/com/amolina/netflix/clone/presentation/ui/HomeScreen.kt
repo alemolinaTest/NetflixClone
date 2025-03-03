@@ -1,12 +1,13 @@
 package com.amolina.netflix.clone.presentation.ui
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.SubcomposeAsyncImage
-import coil.compose.rememberAsyncImagePainter
 import com.amolina.netflix.clone.domain.model.Movie
 import com.amolina.netflix.clone.presentation.viewmodels.MoviesViewModel
 
@@ -41,16 +43,18 @@ fun HomeScreen(navHostController: NavController) {
     val popularMovies = viewModel.popularMovies.collectAsState()
     val nowPlayingMovies = viewModel.nowPlayingMoviesState.collectAsState()
     val upcomingMovies = viewModel.upcomingMoviesState.collectAsState()
+    val recommendationMovie = viewModel.recommendationMoviesState.collectAsState()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black),
+            .background(Color.LightGray),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        item {
-            HeroSection()
+        if(recommendationMovie.value.isNotEmpty()) {
+            item {
+                HeroSection(recommendationMovie.value.first())
+            }
         }
-
         // Movie Carousels
         item {
             MovieCarousel("Trending Now", popularMovies.value)
@@ -61,25 +65,19 @@ fun HomeScreen(navHostController: NavController) {
         item {
             MovieCarousel("Upcoming Movies", upcomingMovies.value)
         }
-        item {
-            BottomNavigationBar(navHostController)
-        }
     }
 }
 
 @Composable
-fun HeroSection() {
+fun HeroSection(recommendationMovie: Movie) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(300.dp)
+            .fillMaxHeight()
+            .background(Color.LightGray)
     ) {
-        Image(
-            painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/original/sample_banner.jpg"),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize()
-        )
+        MoviePoster(imageUrl = recommendationMovie.posterPath, imageSize = "w780")
+
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -110,7 +108,7 @@ fun MovieCarousel(title: String, movies: List<Movie>) {
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(movies) { movie ->
-                MoviePoster(movie.posterPath.toString())
+                MoviePoster(movie.posterPath.toString(), imageSize = "w500")
             }
         }
     }
@@ -119,39 +117,35 @@ fun MovieCarousel(title: String, movies: List<Movie>) {
 @Composable
 fun MoviePoster(
     imageUrl: String?,
-    imageSize: String = "w500",
+    imageSize: String,
     modifier: Modifier = Modifier
 ) {
     val baseUrl = "https://image.tmdb.org/t/p/"
     val fullImageUrl = imageUrl?.let { "$baseUrl$imageSize/$it" } ?: ""
 
-    Box(
-        contentAlignment = Alignment.Center,
+    Card(
+        border = BorderStroke(width = 1.dp, color = Color.LightGray),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.elevatedCardElevation(6.dp),
         modifier = modifier
-            .background(Color.White, shape = RoundedCornerShape(8.dp))
+            .padding(8.dp).background(color = Color.LightGray)
     ) {
         SubcomposeAsyncImage(
             model = fullImageUrl,
             contentDescription = "Movie Poster",
-            contentScale = ContentScale.Fit, // ✅ Keeps aspect ratio
+            contentScale = ContentScale.FillWidth,
             loading = {
-                CircularProgressIndicator(Modifier.size(32.dp)) // ✅ Show a loading indicator
+                CircularProgressIndicator(Modifier.size(32.dp))
             },
             error = {
                 Box(
-                    Modifier
-                        .size(120.dp)
-                        .background(Color.Red, shape = RoundedCornerShape(8.dp)),
+                    Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("Image Not Found", color = Color.White)
                 }
             },
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxSize()
         )
     }
 }
-
-// Sample data for testing
-val sampleMovies = List(10) { "sample_poster.jpg" }

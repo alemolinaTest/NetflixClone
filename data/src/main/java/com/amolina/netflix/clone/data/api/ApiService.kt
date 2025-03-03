@@ -7,6 +7,7 @@ import com.amolina.netflix.clone.data.model.NowPlayingModel
 import com.amolina.netflix.clone.data.model.SearchModel
 import com.amolina.netflix.clone.data.model.TvSeriesModel
 import com.amolina.netflix.clone.data.model.UpcomingMovieModel
+import com.amolina.netflix.clone.data.model.VideoResponseModel
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -57,4 +58,10 @@ interface ApiService {
         @Path("movie_id") movieId: Int,
         @Query("api_key") apiKey: String = API_KEY
     ): MovieDetailModel
+
+    @GET("movie/{movie_id}/videos")
+    suspend fun getMovieVideos(
+        @Path("movie_id") movieId: Int,
+        @Query("api_key") apiKey: String = "YOUR_API_KEY"
+    ): VideoResponseModel
 }

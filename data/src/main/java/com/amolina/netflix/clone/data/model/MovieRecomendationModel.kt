@@ -19,16 +19,6 @@ data class MovieRecommendationModel(
     val totalResults: Int
 )
 
-@Serializable
-enum class OriginalLanguage {
-    CN, EN, HI;
-
-    companion object {
-        private val map = values().associateBy { it.name.lowercase() }
-        fun fromString(value: String): OriginalLanguage = map[value] ?: throw IllegalArgumentException("Unknown language: $value")
-    }
-}
-
 fun MovieRecommendationModel.toDomain(): MovieRecommendation {
     return MovieRecommendation(
         page = this.page,
@@ -40,13 +30,13 @@ fun MovieRecommendationModel.toDomain(): MovieRecommendation {
 
 fun Result.toDomain(): Movie {
     return Movie(
-//        id = this.id,
-//        title = this.title,
-//        overview = this.overview,
-//        releaseDate = this.releaseDate,
+        id = this.id,
+        title = this.title,
+        overview = this.overview,
+        releaseDate = this.releaseDate,
         posterPath = this.posterPath,
-//        backdropPath = this.backdropPath,
-//        voteAverage = this.voteAverage,
-//        voteCount = this.voteCount
+        backdropPath = this.backdropPath,
+        voteAverage = this.voteAverage,
+        voteCount = this.voteCount
     )
 }

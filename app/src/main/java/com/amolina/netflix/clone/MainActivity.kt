@@ -11,6 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.amolina.netflix.clone.presentation.ui.BottomNavigationBar
 import com.amolina.netflix.clone.presentation.ui.navigation.AppNavGraph
 import com.amolina.netflix.clone.ui.theme.NetflixCloneTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,8 +24,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NetflixCloneTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    AppNavGraph()
+                val navController = rememberNavController()
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = { BottomNavigationBar(navController) }) { innerPadding ->
+                    AppNavGraph(
+                        modifier = Modifier.padding(innerPadding),
+                        navController = navController
+                    )
                 }
             }
         }

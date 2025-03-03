@@ -2,8 +2,6 @@ package com.amolina.netflix.clone.data.model
 
 import com.amolina.netflix.clone.domain.model.MovieDetail
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 @Serializable
 data class MovieDetailModel(
@@ -32,12 +30,7 @@ data class MovieDetailModel(
     val video: Boolean,
     val voteAverage: Double,
     val voteCount: Int
-) {
-    companion object {
-        fun fromRawJson(jsonString: String): MovieDetailModel = Json.decodeFromString(jsonString)
-        fun MovieDetailModel.toRawJson(): String = Json.encodeToString(this)
-    }
-}
+)
 
 @Serializable
 data class Genre(
