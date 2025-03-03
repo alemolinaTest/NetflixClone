@@ -50,28 +50,43 @@ class MoviesViewModel @Inject constructor(
 
     private fun fetchPopularMovies() {
         viewModelScope.launch(context = dispatcher) {
-            _popularMoviesState.value = getPopularMoviesUseCase.invoke()
+             getPopularMoviesUseCase.invoke()
+                .collect { movies ->
+                    _popularMoviesState.value = movies
+                }
         }
     }
 
     private fun fetchUpcomingMovies() {
         viewModelScope.launch(context = dispatcher) {
-            _upcomingMoviesState.value = getUpcomingMoviesUseCase.invoke()
+            getUpcomingMoviesUseCase.invoke()
+                .collect { movies ->
+                    _upcomingMoviesState.value = movies
+
+                }
         }
     }
 
     private fun fetchNowPlayingMovies() {
-        viewModelScope.launch(context = dispatcher) {
-            _nowPlayingMoviesState.value = getNowPlayingMoviesUseCase.invoke()
-            if(_popularMoviesState.value.isNotEmpty()) {
-                fetchRecommendationMovies(_nowPlayingMoviesState.value.last().id)
-            }
+        viewModelScope.launch(dispatcher) {
+            getNowPlayingMoviesUseCase()
+                .collect { movies ->
+                    _nowPlayingMoviesState.value = movies
+                    if (movies.isNotEmpty()) {
+                        fetchRecommendationMovies(movies.last().id)
+                    }
+                }
         }
     }
 
-    private fun fetchRecommendationMovies(movieId:Int) {
-        viewModelScope.launch(context = dispatcher) {
-            _recommendationMoviesState.value = getMovieRecommendationsUseCase.invoke(movieId)
+
+
+    private fun fetchRecommendationMovies(movieId: Int) {
+        viewModelScope.launch(dispatcher) {
+            getMovieRecommendationsUseCase(movieId)
+                .collect { movies ->
+                    _recommendationMoviesState.value = movies
+                }
         }
     }
 
@@ -80,9 +95,10 @@ class MoviesViewModel @Inject constructor(
 
     fun fetchMovieTrailer(movieId: Int) {
         viewModelScope.launch {
-            val response = getMovieVideoUseCase.invoke(movieId)
-            val trailer = response.firstOrNull { it.site == "YouTube" && it.type == "Trailer" }
-            _movieVideoUrl.value = trailer?.let { "https://www.youtube.com/watch?v=${it.videoKey}" }
+            getMovieVideoUseCase(movieId)
+                .collect { result ->
+
+                }
         }
     }
 

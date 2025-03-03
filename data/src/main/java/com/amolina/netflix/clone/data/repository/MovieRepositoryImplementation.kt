@@ -8,43 +8,42 @@ import com.amolina.netflix.clone.domain.model.Video
 import com.amolina.netflix.clone.domain.repository.MovieRepository
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.HttpException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 
 class MovieRepositoryImplementation @Inject constructor(private val api: ApiService) :
     MovieRepository {
-    override suspend fun getUpcomingMovies(): Result<List<Movie>> =
-        safeApiCall { api.getUpcomingMovies().toDomain().results }
+    override fun getUpcomingMovies(): Flow<Result<List<Movie>>> =
+        safeApiCallFlow { api.getUpcomingMovies().toDomain().results }
 
-    override suspend fun getNowPlayingMovies(): Result<List<Movie>> =
-        safeApiCall { api.getNowPlayingMovies().toDomain().results }
+    override fun getNowPlayingMovies(): Flow<Result<List<Movie>>> =
+        safeApiCallFlow { api.getNowPlayingMovies().toDomain().results }
 
-    override suspend fun getTopRatedSeries() = safeApiCall { api.getTopRatedSeries().toDomain() }
-    override suspend fun searchMovies(searchText: String) =
-        safeApiCall { api.searchMovies(searchText).toDomain() }
+    override fun getTopRatedSeries() = safeApiCallFlow { api.getTopRatedSeries().toDomain() }
 
-    override suspend fun getPopularMovies(): Result<List<Movie>> =
-        safeApiCall { api.getPopularMovies().toDomain().results }
+    override fun searchMovies(searchText: String) =
+        safeApiCallFlow { api.searchMovies(searchText).toDomain() }
 
-    override suspend fun getMovieDetail(movieId: Int) =
-        safeApiCall { api.getMovieDetail(movieId).toDomain() }
+    override fun getPopularMovies(): Flow<Result<List<Movie>>> =
+        safeApiCallFlow { api.getPopularMovies().toDomain().results }
 
-    override suspend fun getMovieRecommendations(movieId: Int): Result<List<Movie>> =
-        safeApiCall { api.getMovieRecommendations(movieId).toDomain().results }
+    override fun getMovieDetail(movieId: Int) =
+        safeApiCallFlow { api.getMovieDetail(movieId).toDomain() }
 
-    override suspend fun getMovieVideo(movieId: Int): Result<List<Video>> =
-        safeApiCall { api.getMovieVideos(movieId).toVideoDomainList() }
+    override fun getMovieRecommendations(movieId: Int): Flow<Result<List<Movie>>> =
+        safeApiCallFlow { api.getMovieRecommendations(movieId).toDomain().results }
 
-    private suspend fun <T> safeApiCall(apiCall: suspend () -> T): Result<T> {
-        return withContext(Dispatchers.IO) {
-            try {
-               val result = Result.success(apiCall())
-                result
-            } catch (e: HttpException) {
-                Result.failure(Exception("Network error: ${e.message()}"))
-            } catch (e: Exception) {
-                Result.failure(Exception("Unknown error: ${e.message}"))
-            }
-        }
-    }
+    override fun getMovieVideo(movieId: Int): Flow<Result<List<Video>>> =
+        safeApiCallFlow { api.getMovieVideos(movieId).toVideoDomainList() }
+
+   
+
+    private fun <T> safeApiCallFlow(apiCall: suspend () -> T): Flow<Result<T>> = flow {
+        emit(Result.success(apiCall()))
+    }.catch { e ->
+        emit(Result.failure(Exception("Network error: ${e.message}")))
+    }.flowOn(Dispatchers.IO)
+
 }
